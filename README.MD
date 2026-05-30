@@ -19,19 +19,19 @@ An end-to-end full-stack AI application that extracts unstructured deadlines fro
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/yourusername/syllabus-sync.git
-cd syllabus-sync
+git clone https://github.com/ManvilB/Syllabus-Tracker.git
+cd Syllabus-Tracker
 ```
 
 ### 2. Backend Environment (Flask)
 Navigate to the backend directory, set up your virtual environment, and install dependencies:
-\`\`\`bash
+```bash
 cd backend
 python -m venv venv
 # Windows: .\venv\Scripts\activate
 # Mac/Linux: source venv/bin/activate
 pip install -r requirements.txt
-\`\`\`
+```
 
 You will need to add two security files to the `backend/` directory:
 1. An `.env` file containing your `OPENAI_API_KEY=your_key_here`.
