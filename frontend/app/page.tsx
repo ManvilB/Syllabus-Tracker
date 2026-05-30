@@ -15,6 +15,8 @@ export default function Home() {
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [deletingIndex, setDeletingIndex] = useState<number | null>(null);
   
+  const [isEditingTitle, setIsEditingTitle] = useState(false);
+  
   const [studyPlanModalOpen, setStudyPlanModalOpen] = useState(false);
   const [studyPlanContent, setStudyPlanContent] = useState('');
   const [isGeneratingPlan, setIsGeneratingPlan] = useState(false);
@@ -157,6 +159,7 @@ export default function Home() {
     setStatusMessage('');
     setEditingIndex(null); 
     setDeletingIndex(null);
+    setIsEditingTitle(false);
     
     try {
       const response = await fetch('http://localhost:5000/api/sync', {
@@ -279,17 +282,34 @@ export default function Home() {
         ) : (
           <div className="animate-in slide-in-from-bottom-4 duration-500">
             <div className="flex items-center justify-between mb-4 border-b border-slate-100 pb-4">
+              
               <div className="flex-grow flex items-center group/title mr-4">
-                <input 
-                  type="text"
-                  value={parsedData.course_name}
-                  onChange={(e) => handleCourseTitleChange(e.target.value)}
-                  className="text-lg font-bold text-slate-800 bg-transparent border border-transparent hover:border-slate-200 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-100 rounded-lg px-2 py-1 outline-none w-full max-w-sm transition-all"
-                  title="Click to edit course name"
-                />
-                <svg className="w-4 h-4 text-slate-300 opacity-0 group-hover/title:opacity-100 transition-opacity ml-1 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                </svg>
+                {isEditingTitle ? (
+                  <input 
+                    type="text"
+                    value={parsedData.course_name}
+                    onChange={(e) => handleCourseTitleChange(e.target.value)}
+                    onBlur={() => setIsEditingTitle(false)}
+                    onKeyDown={(e) => e.key === 'Enter' && setIsEditingTitle(false)}
+                    className="text-lg font-bold text-slate-800 bg-white border border-indigo-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 rounded-lg px-2 py-1 outline-none w-full max-w-sm transition-all"
+                    autoFocus
+                  />
+                ) : (
+                  <>
+                    <h2 className="text-lg font-bold text-slate-800 px-2 py-1 truncate max-w-sm">
+                      {parsedData.course_name}
+                    </h2>
+                    <button
+                      onClick={() => setIsEditingTitle(true)}
+                      className="text-slate-400 hover:text-indigo-500 transition-colors p-1.5 ml-1 rounded-lg opacity-0 group-hover/title:opacity-100 focus:opacity-100 focus:outline-none shrink-0"
+                      title="Edit course name"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                      </svg>
+                    </button>
+                  </>
+                )}
               </div>
 
               <span className="bg-indigo-100 text-indigo-700 text-xs font-bold px-3 py-1 rounded-full shrink-0">
@@ -297,7 +317,6 @@ export default function Home() {
               </span>
             </div>
             
-            {/* UPDATED: GRID LAYOUT FOR HEADERS */}
             <div className="grid grid-cols-4 gap-4 px-5 mb-2 text-xs font-bold text-slate-500 uppercase tracking-wider">
               <div className="col-span-1">Assignment Name</div>
               <div className="col-span-1">Due Date</div>
@@ -307,7 +326,6 @@ export default function Home() {
 
             <div className="max-h-[400px] overflow-y-auto pr-2 space-y-2 custom-scrollbar">
               {parsedData.schedule.map((item: any, index: number) => (
-                // UPDATED: GRID LAYOUT FOR ROWS
                 <div key={index} className="grid grid-cols-4 gap-4 items-center bg-white border border-slate-200 p-2.5 rounded-xl hover:border-indigo-200 hover:shadow-sm transition-all group">
                   
                   {editingIndex === index ? (
