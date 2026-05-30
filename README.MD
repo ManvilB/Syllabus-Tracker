@@ -38,17 +38,17 @@ You will need to add two security files to the `backend/` directory:
 2. A `credentials.json` file downloaded from your Google Cloud Console (with Calendar API enabled).
 
 Start the server:
-\`\`\`bash
+```bash
 python app.py
-\`\`\`
+```
 
 ### 3. Frontend Environment (Next.js)
 Open a new terminal window, navigate to the frontend directory, and start the development server:
-\`\`\`bash
+```bash
 cd frontend
 npm install
 npm run dev
-\`\`\`
+```
 Visit `http://localhost:3000` to interact with the application.
 
 ## Architecture & Data Flow
