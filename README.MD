@@ -18,10 +18,10 @@ An end-to-end full-stack AI application that extracts unstructured deadlines fro
 ## Local Setup
 
 ### 1. Clone the Repository
-\`\`\`bash
+```bash
 git clone https://github.com/yourusername/syllabus-sync.git
 cd syllabus-sync
-\`\`\`
+```
 
 ### 2. Backend Environment (Flask)
 Navigate to the backend directory, set up your virtual environment, and install dependencies:
