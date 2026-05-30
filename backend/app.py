@@ -9,18 +9,14 @@ from google.oauth2.credentials import Credentials
 from utils.llm import parse_syllabus_to_json, generate_custom_study_plan
 
 app = Flask(__name__)
-CORS(app, supports_credentials=True) # supports_credentials is required for session cookies
+CORS(app, supports_credentials=True)
 app.secret_key = os.getenv("FLASK_SECRET_KEY", "change-this-to-a-secure-random-key")
 
-# Point to your downloaded credentials file
 CLIENT_SECRETS_FILE = "credentials.json"
-# The scope must exactly match what you configured in the cloud console
 SCOPES = ['https://www.googleapis.com/auth/calendar.events']
 
-# Tell Google's libraries to allow HTTP for local development (do not use in production)
 os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
 
-# Ensure the uploads directory exists before saving files!
 os.makedirs('uploads', exist_ok=True)
 
 @app.route('/api/upload', methods=['POST'])
@@ -41,7 +37,6 @@ def upload_syllabus():
             structured_data = parse_syllabus_to_json(raw_text)
             os.remove(filepath)
             
-            # CHANGE: Stop here! Just return the JSON to the frontend for review.
             return jsonify({
                 "message": "Syllabus parsed! Please review your dates.",
                 "data": structured_data
@@ -50,7 +45,6 @@ def upload_syllabus():
         except Exception as e:
             return jsonify({"error": str(e)}), 500
 
-# NEW ROUTE: Handles the final push to Google Calendar
 @app.route('/api/sync', methods=['POST'])
 def sync_calendar():
     if 'credentials' not in session:
@@ -108,7 +102,6 @@ def auth_google():
     
     session['state'] = state
     
-    # ADD THIS LINE: Save the PKCE code verifier into the session
     session['code_verifier'] = getattr(flow, 'code_verifier', None)
     
     return redirect(authorization_url)
@@ -123,7 +116,6 @@ def auth_callback():
     )
     flow.redirect_uri = 'http://localhost:5000/api/auth/callback'
     
-    # ADD THESE LINES: Restore the PKCE code verifier from the session
     code_verifier = session.get('code_verifier')
     if code_verifier:
         flow.code_verifier = code_verifier
@@ -154,8 +146,6 @@ def add_events_to_google_calendar(structured_data, creds_dict):
     
     created_events = []
     
-    # NEW: Map our text priorities to Google Calendar Color IDs
-    # 11 = Tomato (Red), 5 = Banana (Yellow), 10 = Basil (Green)
     color_mapping = {
         "High": "11",
         "Medium": "5",
@@ -180,7 +170,6 @@ def add_events_to_google_calendar(structured_data, creds_dict):
             'end': {
                 'date': due_date,
             },
-            # NEW: Inject the colorId into the event
             'colorId': color_mapping.get(priority, "5") 
         }
         
@@ -188,6 +177,6 @@ def add_events_to_google_calendar(structured_data, creds_dict):
         created_events.append(event.get('htmlLink'))
         
     return created_events
-# Make sure this is at the bottom so the server actually starts!
+
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
